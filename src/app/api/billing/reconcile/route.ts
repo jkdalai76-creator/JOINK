@@ -3,7 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { activatePro } from "@/lib/billing/service";
 import { fetchRazorpaySubscription } from "@/lib/billing/razorpay";
 import { razorpayConfigured } from "@/lib/env";
-import { getPurchasablePlan } from "@/lib/plans";
+import { getPlanById } from "@/lib/plans";
 import { getStore } from "@/lib/store";
 
 /**
@@ -25,7 +25,7 @@ export async function POST() {
     }
     const remote = await fetchRazorpaySubscription(sub.razorpay_subscription_id);
     if (remote.status === "active") {
-      const plan = getPurchasablePlan("pro");
+      const plan = getPlanById(sub.plan_id);
       if (plan) {
         await activatePro(store, user.id, plan, {
           provider: "razorpay",

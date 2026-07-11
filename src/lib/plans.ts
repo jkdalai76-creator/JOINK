@@ -45,21 +45,26 @@ export const PLAN_CATALOG: Record<PlanCode, Plan> = {
     amount_minor: 149900, // ₹1,499.00
     currency: "INR",
     billing_interval: "month",
-    razorpay_plan_id: null,
+    razorpay_plan_id: env.razorpayTeamPlanId || null,
     project_limit: 200,
     monthly_url_limit: 2000,
     monthly_chat_limit: 2000,
     monthly_voice_limit: 1000,
     features: { csv_export: true, priority: true, shared_projects: true, members: 5 },
-    is_active: false, // "Coming soon" for the hackathon
+    is_active: true,
   },
 };
 
 /** Looks up a purchasable plan by code. Unknown/inactive codes are rejected. */
 export function getPurchasablePlan(code: string): Plan | null {
-  if (code !== "pro") return null; // only Pro is purchasable in the MVP
+  if (code !== "pro" && code !== "team") return null; // Free is not purchasable
   const plan = PLAN_CATALOG[code];
   return plan?.is_active ? plan : null;
+}
+
+/** Resolves a plan by its catalog id (e.g. "plan-pro") — used post-payment. */
+export function getPlanById(id: string): Plan | null {
+  return Object.values(PLAN_CATALOG).find((p) => p.id === id) ?? null;
 }
 
 export function getPlanByCode(code: string): Plan | null {

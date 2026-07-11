@@ -30,6 +30,9 @@ export const env = {
   razorpayKeySecret: process.env.RAZORPAY_KEY_SECRET ?? "",
   razorpayWebhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET ?? "",
   razorpayProPlanId: process.env.RAZORPAY_PRO_PLAN_ID ?? "",
+  razorpayTeamPlanId: process.env.RAZORPAY_TEAM_PLAN_ID ?? "",
+  // One-time bootstrap token gating /api/admin/setup-plans. Unset = disabled.
+  razorpaySetupToken: process.env.RAZORPAY_SETUP_TOKEN ?? "",
 
   demoSessionSecret:
     process.env.DEMO_SESSION_SECRET ?? "joink-dev-only-insecure-secret",
@@ -52,7 +55,7 @@ export function razorpayConfigured(): boolean {
 
 /** Razorpay Subscriptions can be used (otherwise one-time Orders fallback). */
 export function razorpaySubscriptionsConfigured(): boolean {
-  return razorpayConfigured() && Boolean(env.razorpayProPlanId);
+  return razorpayConfigured() && Boolean(env.razorpayProPlanId || env.razorpayTeamPlanId);
 }
 
 /**

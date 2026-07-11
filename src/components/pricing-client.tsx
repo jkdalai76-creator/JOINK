@@ -141,10 +141,14 @@ export function PricingClient({ signedIn }: { signedIn: boolean }) {
                   )
                 ) : isCurrent ? (
                   <Button variant="secondary" className="w-full" disabled>
-                    You&apos;re on Pro
+                    You&apos;re on {plan.name}
                   </Button>
                 ) : signedIn ? (
-                  <UpgradeButton planCode="pro" onUpgraded={() => setCurrentPlan("pro")} />
+                  <UpgradeButton
+                    planCode={plan.code}
+                    label={`Upgrade to ${plan.name}`}
+                    onUpgraded={() => setCurrentPlan(plan.code)}
+                  />
                 ) : (
                   <Link href="/sign-up">
                     <Button className="w-full">Sign up to upgrade</Button>

@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { getPlanByCode, getPurchasablePlan, PLAN_CATALOG } from "@/lib/plans";
+import { getPlanById, getPlanByCode, getPurchasablePlan, PLAN_CATALOG } from "@/lib/plans";
 
 describe("trusted plan catalog", () => {
   it("looks up the Pro price server-side (₹499 in paise)", () => {
     const pro = getPurchasablePlan("pro");
     expect(pro?.amount_minor).toBe(49900);
     expect(pro?.currency).toBe("INR");
+  });
+
+  it("looks up the Team price server-side (₹1,499 in paise)", () => {
+    const team = getPurchasablePlan("team");
+    expect(team?.amount_minor).toBe(149900);
+    expect(team?.currency).toBe("INR");
   });
 
   it("rejects unknown plan codes", () => {
@@ -15,9 +21,14 @@ describe("trusted plan catalog", () => {
     expect(getPlanByCode("nope")).toBeNull();
   });
 
-  it("refuses to sell free and coming-soon plans", () => {
+  it("refuses to sell the free plan", () => {
     expect(getPurchasablePlan("free")).toBeNull();
-    expect(getPurchasablePlan("team")).toBeNull();
+  });
+
+  it("resolves plans by catalog id for post-payment activation", () => {
+    expect(getPlanById("plan-pro")?.code).toBe("pro");
+    expect(getPlanById("plan-team")?.code).toBe("team");
+    expect(getPlanById("plan-nonexistent")).toBeNull();
   });
 
   it("keeps Pro limits above Free limits", () => {

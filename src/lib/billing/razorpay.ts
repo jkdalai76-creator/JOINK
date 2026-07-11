@@ -37,6 +37,41 @@ async function rzp<T>(path: string, init?: RequestInit): Promise<T> {
   return (await res.json()) as T;
 }
 
+export interface RazorpayPlan {
+  id: string;
+  period: string;
+  interval: number;
+  item: { name: string; amount: number; currency: string };
+}
+
+/**
+ * Creates a monthly Razorpay subscription Plan. Used once by the token-gated
+ * bootstrap endpoint so the owner never has to hand-craft plans in the
+ * dashboard — the secret stays server-side.
+ */
+export function createRazorpayPlan(params: {
+  name: string;
+  amountMinor: number;
+  currency: string;
+  description?: string;
+  notes?: Record<string, string>;
+}): Promise<RazorpayPlan> {
+  return rzp<RazorpayPlan>("/plans", {
+    method: "POST",
+    body: JSON.stringify({
+      period: "monthly",
+      interval: 1,
+      item: {
+        name: params.name,
+        amount: params.amountMinor,
+        currency: params.currency,
+        description: params.description,
+      },
+      notes: params.notes ?? {},
+    }),
+  });
+}
+
 export interface RazorpayOrder {
   id: string;
   amount: number;

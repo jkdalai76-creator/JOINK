@@ -1,11 +1,6 @@
 import { randomUUID } from "node:crypto";
-import {
-  env,
-  mockBillingEnabled,
-  razorpayConfigured,
-  razorpaySubscriptionsConfigured,
-} from "@/lib/env";
-import { getPurchasablePlan } from "@/lib/plans";
+import { env, mockBillingEnabled, razorpayConfigured } from "@/lib/env";
+import { getPlanById, getPurchasablePlan } from "@/lib/plans";
 import type { DataStore } from "@/lib/store/types";
 import type { Plan, Subscription } from "@/lib/types";
 import {
@@ -45,7 +40,9 @@ export async function createCheckout(
   const plan = getPurchasablePlan(planCode);
   if (!plan) throw new BillingError("unknown_plan", "That plan cannot be purchased.");
 
-  if (razorpaySubscriptionsConfigured() && plan.razorpay_plan_id) {
+  // Subscription mode is chosen per-plan: whenever THIS plan has a Razorpay
+  // plan id, subscribe; otherwise fall back to a one-time order below.
+  if (razorpayConfigured() && plan.razorpay_plan_id) {
     const sub = await createRazorpaySubscription({
       planId: plan.razorpay_plan_id,
       notes: { joink_user_id: userId, joink_plan_code: plan.code },
@@ -155,9 +152,6 @@ export async function verifyCheckout(
   userId: string,
   input: VerifyCheckoutInput,
 ): Promise<{ activated: boolean; status: string }> {
-  const plan = getPurchasablePlan("pro");
-  if (!plan) throw new BillingError("unknown_plan", "Plan unavailable.");
-
   if (input.mode === "mock") {
     if (!mockBillingEnabled()) {
       throw new BillingError("mock_disabled", "Mock billing is not enabled.", 403);
@@ -166,6 +160,8 @@ export async function verifyCheckout(
       ? await store.getPaymentOrderById(userId, input.mockToken)
       : null;
     if (!order) throw new BillingError("invalid_order", "Unknown mock order.");
+    const plan = getPlanById(order.plan_id);
+    if (!plan) throw new BillingError("unknown_plan", "Plan unavailable.");
     await store.updatePaymentOrder(order.id, { status: "paid" });
     await store.upsertPaymentByRazorpayId({
       user_id: userId,
@@ -198,6 +194,8 @@ export async function verifyCheckout(
     if (!sub || sub.user_id !== userId) {
       throw new BillingError("invalid_subscription", "Subscription not found.", 404);
     }
+    const plan = getPlanById(sub.plan_id);
+    if (!plan) throw new BillingError("unknown_plan", "Plan unavailable.");
     // Confirm real state with Razorpay before granting anything.
     const remote = await fetchRazorpaySubscription(input.razorpaySubscriptionId!);
     const active = remote.status === "active" || remote.status === "authenticated";
@@ -246,6 +244,8 @@ export async function verifyCheckout(
   if (!order || order.user_id !== userId) {
     throw new BillingError("invalid_order", "Order not found.", 404);
   }
+  const plan = getPlanById(order.plan_id);
+  if (!plan) throw new BillingError("unknown_plan", "Plan unavailable.");
   // Confirm capture with the Razorpay API — the client callback alone is
   // never trusted to grant access.
   const payment = await fetchRazorpayPayment(input.razorpayPaymentId!);
