@@ -7,6 +7,7 @@ import {
   Globe,
   MessageSquareQuote,
   Mic,
+  PlayCircle,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -93,6 +94,15 @@ export default async function LandingPage() {
               Start scraping
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
             </Link>
+            <a
+              href="/tour.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 rounded-xl border border-emerald-300 bg-white px-7 py-3.5 text-base font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-50"
+            >
+              <PlayCircle className="h-5 w-5 transition-transform group-hover:scale-110" aria-hidden />
+              Watch the tour
+            </a>
             <Link
               href="/guide"
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-base font-medium text-slate-700 transition hover:bg-slate-100"
@@ -313,6 +323,7 @@ export default async function LandingPage() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-slate-500">
           <Logo />
           <div className="flex gap-6">
+            <a href="/tour.html" target="_blank" rel="noopener noreferrer" className="transition hover:text-slate-700">Product tour</a>
             <Link href="/guide" className="transition hover:text-slate-700">Guide & FAQ</Link>
             <Link href="/pricing" className="transition hover:text-slate-700">Pricing</Link>
             <Link href="/sign-in" className="transition hover:text-slate-700">Sign in</Link>
