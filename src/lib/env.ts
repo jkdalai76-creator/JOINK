@@ -9,9 +9,18 @@
 export const env = {
   appBaseUrl: process.env.APP_BASE_URL ?? "http://localhost:3000",
 
-  supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-  supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
-  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
+  // Accept both the classic env var names and the newer ones the Vercel–
+  // Supabase integration installs (publishable = anon, secret = service_role),
+  // so a one-click integration "just works" without manual copying.
+  supabaseUrl:
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL ?? "",
+  supabaseAnonKey:
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.SUPABASE_PUBLISHABLE_KEY ??
+    "",
+  supabaseServiceRoleKey:
+    process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY ?? "",
 
   aiApiKey: process.env.AI_API_KEY ?? "",
   aiBaseUrl: process.env.AI_BASE_URL ?? "https://api.openai.com/v1",

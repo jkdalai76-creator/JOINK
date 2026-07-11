@@ -41,15 +41,22 @@ you already created. Budget ~15 minutes. You only need a web browser.
 2. Click **Add New…** → **Project**.
 3. Find **JOINK** in the list and click **Import**.
 4. Vercel auto-detects everything — **do not change** the build settings.
-5. Before clicking Deploy, expand **Environment Variables** and add these
-   (Name on the left, Value on the right). Copy the values from your Supabase
-   **API** tab (Part A, step 5):
+5. **Environment variables — two easy options:**
+
+   **Option 1 (recommended): the Vercel–Supabase integration.** In Vercel's
+   marketplace add the **Supabase** integration and connect it to your project.
+   It auto-installs all the keys for you. Joink now understands the names the
+   integration uses (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
+   `SUPABASE_SECRET_KEY`, etc.) — nothing to copy by hand.
+
+   **Option 2: add them manually.** Expand **Environment Variables** and add these
+   three, copying the values from your Supabase **API** tab (Part A, step 5):
 
    | Name | Value |
    | --- | --- |
    | `NEXT_PUBLIC_SUPABASE_URL` | your Supabase **Project URL** |
-   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | your **anon public** key |
-   | `SUPABASE_SERVICE_ROLE_KEY` | your **service_role secret** key |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | your **anon / publishable** key |
+   | `SUPABASE_SERVICE_ROLE_KEY` | your **service_role / secret** key |
 
 6. Click **Deploy** and wait ~2 minutes for it to finish. Vercel shows a
    **"Congratulations"** screen with a **Visit** button — that's your live site. 🎉
