@@ -80,7 +80,8 @@ body {
 .joink-eq-bar { animation: joink-eq 1s ease-in-out infinite; transform-origin: bottom; }
 
 .joink-gradient-text {
-  background: linear-gradient(100deg, #818cf8, #e879f9, #38bdf8, #818cf8);
+  /* deeper hues so the gradient stays readable on light backgrounds */
+  background: linear-gradient(100deg, #4f46e5, #c026d3, #0284c7, #4f46e5);
   background-size: 250% 250%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -88,13 +89,23 @@ body {
   animation: joink-gradient-pan 8s ease infinite;
 }
 
-/* Subtle blueprint grid for dark sections */
+.dark .joink-gradient-text {
+  background-image: linear-gradient(100deg, #818cf8, #e879f9, #38bdf8, #818cf8);
+}
+
+/* Subtle blueprint grid (light + dark variants) */
 .joink-grid-bg {
+  background-image:
+    linear-gradient(rgba(100, 116, 139, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100, 116, 139, 0.1) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 35%, black 40%, transparent 100%);
+}
+
+.dark .joink-grid-bg {
   background-image:
     linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
     linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: radial-gradient(ellipse 90% 70% at 50% 35%, black 40%, transparent 100%);
 }
 
 /* 3D scene helpers */
