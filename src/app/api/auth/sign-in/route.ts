@@ -16,7 +16,17 @@ export async function POST(req: Request) {
     if (supabaseConfigured()) {
       const supabase = await createUserClient();
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) return fail("auth_error", "Incorrect email or password.", 401);
+      if (error) {
+        // Give a clearer hint when the account exists but isn't confirmed yet.
+        const notConfirmed = /confirm/i.test(error.message);
+        return fail(
+          "auth_error",
+          notConfirmed
+            ? "Your email isn't confirmed yet. Check your inbox for the confirmation link, or reset your password to continue."
+            : "Incorrect email or password.",
+          401,
+        );
+      }
       return ok({ user: { id: data.user.id, email: data.user.email } });
     }
 
