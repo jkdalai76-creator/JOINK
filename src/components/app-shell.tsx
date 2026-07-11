@@ -14,6 +14,7 @@ const NAV = [
   { href: "/projects/new", label: "New project" },
   { href: "/pricing", label: "Pricing" },
   { href: "/billing", label: "Billing" },
+  { href: "/guide", label: "Guide" },
 ];
 
 export function Logo({ className }: { className?: string }) {

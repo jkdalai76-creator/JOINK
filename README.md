@@ -22,6 +22,7 @@ method, status and confidence indicator**.
 - 💳 Razorpay **Test Mode** billing (Subscriptions, or one-time Orders fallback), server-priced plans, verified signatures, idempotent webhooks, server-side entitlements
 - 🧪 64 unit tests + Playwright end-to-end tests
 - 🪫 Graceful degradation: the core scraping flow works **without** Supabase, AI, or Razorpay configured
+- 📖 Built-in beginner Guide & FAQ at `/guide` — explains web scraping from zero, with a visual step-by-step walkthrough
 
 ## Quick start (zero configuration — demo mode)
 
@@ -150,7 +151,7 @@ Users are responsible for complying with each site's terms of service and applic
 | Checkout button says payments not configured | Set Razorpay keys, or `ALLOW_MOCK_BILLING=true` outside production |
 | Webhook returns 401 | `RAZORPAY_WEBHOOK_SECRET` must exactly match the secret configured in the Razorpay dashboard |
 | Pro didn't activate after checkout | Press "Reconcile with Razorpay" on the Billing page — it re-checks the subscription via the API |
-| E2E tests can't find a browser | `npx playwright install chromium` (not needed where a preinstalled browser path is configured) |
+| E2E tests can't find a browser | `npx playwright install chromium`, or point at an existing binary: `PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome npm run test:e2e` |
 
 ## Documentation
 

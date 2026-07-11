@@ -24,6 +24,12 @@ export default async function LandingPage() {
           <Logo className="text-lg" />
           <nav className="flex items-center gap-2" aria-label="Main">
             <Link
+              href="/guide"
+              className="hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 sm:block"
+            >
+              How it works
+            </Link>
+            <Link
               href="/pricing"
               className="hidden rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 sm:block"
             >
@@ -79,10 +85,10 @@ export default async function LandingPage() {
             <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
           <Link
-            href="/pricing"
+            href="/guide"
             className="rounded-lg border border-slate-300 px-6 py-3 text-base font-medium text-slate-700 hover:bg-slate-50"
           >
-            View pricing
+            New to this? Read the guide
           </Link>
         </div>
       </section>
@@ -220,6 +226,7 @@ export default async function LandingPage() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-slate-500">
           <Logo />
           <div className="flex gap-6">
+            <Link href="/guide" className="hover:text-slate-700">Guide & FAQ</Link>
             <Link href="/pricing" className="hover:text-slate-700">Pricing</Link>
             <Link href="/sign-in" className="hover:text-slate-700">Sign in</Link>
             <Link href="/sign-up" className="hover:text-slate-700">Sign up</Link>

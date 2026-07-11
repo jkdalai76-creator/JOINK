@@ -9,6 +9,11 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:3100",
     trace: "retain-on-failure",
+    // Allow overriding the browser binary (e.g. preinstalled environments
+    // where the Playwright-pinned revision isn't downloaded).
+    ...(process.env.PLAYWRIGHT_CHROMIUM_PATH
+      ? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH } }
+      : {}),
   },
   webServer: {
     command: "npm run dev -- --port 3100",

@@ -30,19 +30,20 @@ test("free user upgrades to Pro through mock checkout and gets higher limits", a
 
   // Pricing page shows the mock-billing badge and plans
   await page.goto("/pricing");
-  await expect(page.getByText("Mock billing mode")).toBeVisible();
+  await expect(page.getByText("Mock billing mode — Razorpay not configured")).toBeVisible();
   await expect(page.getByText("Coming soon").first()).toBeVisible();
 
   // Upgrade via the labelled mock checkout
   await page.getByRole("button", { name: "Upgrade to Pro" }).click();
   await expect(page.getByRole("dialog", { name: "Mock checkout (no real payment)" })).toBeVisible();
   await page.getByRole("button", { name: /Pay ₹499 \(mock\)/ }).click();
-  await expect(page.getByText("You're on Pro now")).toBeVisible();
+  // The plan card re-renders into the current-plan state once Pro activates.
+  await expect(page.getByRole("button", { name: "You're on Pro" })).toBeDisabled();
 
   // Billing page reflects Pro, verified payment, and higher limits
   await page.goto("/billing");
   await expect(page.getByText("Pro").first()).toBeVisible();
-  await expect(page.getByText("verified")).toBeVisible();
+  await expect(page.getByText("verified", { exact: true })).toBeVisible();
   await expect(page.getByText("Mock billing (labelled test)")).toBeVisible();
   await expect(page.getByText("500", { exact: false }).first()).toBeVisible();
 

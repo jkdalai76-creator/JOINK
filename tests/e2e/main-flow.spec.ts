@@ -23,6 +23,16 @@ test("landing page renders with CTA and responsible-scraping statement", async (
   await expect(page.getByText("responsible-scraping commitment")).toBeVisible();
 });
 
+test("beginner guide & FAQ page renders for guests", async ({ page }) => {
+  await page.goto("/guide");
+  await expect(page.getByRole("heading", { name: "New here? This guide explains everything." })).toBeVisible();
+  await expect(page.getByText("What is “web scraping”, in plain words?")).toBeVisible();
+  // FAQ expands
+  await page.getByText("I've never used a tool like this. Is it complicated?").click();
+  await expect(page.getByText("Load demo project", { exact: false }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Try it yourself/ })).toBeVisible();
+});
+
 test("full main flow with demo project", async ({ page }) => {
   await signUp(page, `main-${Date.now()}@e2e.test`);
 
@@ -36,14 +46,17 @@ test("full main flow with demo project", async ({ page }) => {
   // Workspace overview: partial status, failed URL visible but not fatal
   await expect(page.getByText("Extraction results")).toBeVisible();
   await expect(page.getByText("3 of 4 pages extracted, 1 failed")).toBeVisible();
-  await expect(page.getByText("Web Scraping Basics: A Practical Guide")).toBeVisible();
+  await expect(
+    page.getByRole("paragraph").filter({ hasText: "Web Scraping Basics: A Practical Guide" }),
+  ).toBeVisible();
   await expect(page.getByText('Requests to "intranet.example.internal" are not allowed.')).toBeVisible();
 
   // Headings tab with level filter
   await page.getByRole("tab", { name: /Headings/ }).click();
-  await expect(page.getByText("Scraping ethically")).toBeVisible();
+  // "Scraping ethically" appears as a heading and as a section hint — use first().
+  await expect(page.getByText("Scraping ethically").first()).toBeVisible();
   await page.getByLabel("Filter by heading level").selectOption("1");
-  await expect(page.getByText("Scraping ethically")).toBeHidden();
+  await expect(page.getByText("Scraping ethically").first()).toBeHidden();
   await expect(page.getByRole("cell", { name: "Web Scraping Basics", exact: true })).toBeVisible();
   await page.getByLabel("Filter by heading level").selectOption("all");
 
@@ -52,6 +65,7 @@ test("full main flow with demo project", async ({ page }) => {
   await expect(page.getByText("MDN: HTML")).toBeVisible();
   await page.getByLabel("Filter internal or external links").selectOption("internal");
   await expect(page.getByText("MDN: HTML")).toBeHidden();
+  await page.getByLabel("Filter internal or external links").selectOption("all");
 
   // Keyword search
   await page.getByLabel("Search extracted content").fill("robots");
