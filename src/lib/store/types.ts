@@ -1,6 +1,7 @@
 import type {
   Conversation,
   ExtractedLink,
+  Feedback,
   Heading,
   Message,
   Payment,
@@ -115,4 +116,10 @@ export interface DataStore {
 
   // ── plan resolution ──
   getUserPlan(userId: string): Promise<Plan>;
+
+  // ── site stats & feedback ──
+  /** Records a unique visitor key; returns the cumulative visitor count. */
+  recordVisitor(visitorKey: string): Promise<number>;
+  countVisitors(): Promise<number>;
+  createFeedback(entry: Omit<Feedback, "id" | "created_at">): Promise<Feedback>;
 }

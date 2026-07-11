@@ -115,6 +115,30 @@ describe("MemoryStore", () => {
   });
 });
 
+describe("visitor counting & feedback", () => {
+  beforeEach(() => resetMemoryDb());
+
+  it("counts each visitor key exactly once", async () => {
+    const store = new MemoryStore();
+    expect(await store.recordVisitor("v1")).toBe(1);
+    expect(await store.recordVisitor("v1")).toBe(1); // repeat visit, same cookie
+    expect(await store.recordVisitor("v2")).toBe(2);
+    expect(await store.countVisitors()).toBe(2);
+  });
+
+  it("stores feedback with optional user and email", async () => {
+    const store = new MemoryStore();
+    const fb = await store.createFeedback({
+      user_id: null,
+      email: null,
+      message: "Love the citations feature!",
+      page: "/dashboard",
+    });
+    expect(fb.id).toBeTruthy();
+    expect(fb.message).toContain("citations");
+  });
+});
+
 describe("webhook processing (idempotent activation)", () => {
   beforeEach(() => resetMemoryDb());
 
