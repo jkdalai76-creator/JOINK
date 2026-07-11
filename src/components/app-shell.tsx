@@ -7,6 +7,7 @@ import { FlaskConical, LogOut, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/client";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { BackgroundPicker } from "@/components/background-picker";
 import type { SessionUser } from "@/lib/auth";
 import type { RuntimeMode } from "@/lib/env";
 
@@ -83,6 +84,7 @@ export function AppShell({
             </nav>
           </div>
           <div className="hidden items-center gap-3 md:flex">
+            <BackgroundPicker />
             <ThemeToggle />
             <span className="text-sm text-slate-500">{user.display_name}</span>
             <button
@@ -95,6 +97,7 @@ export function AppShell({
             </button>
           </div>
           <div className="flex items-center gap-1 md:hidden">
+          <BackgroundPicker />
           <ThemeToggle />
           <button
             className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"

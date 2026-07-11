@@ -194,3 +194,18 @@ body {
 .dark .shadow-sm, .dark .shadow-md, .dark .shadow-xl {
   --tw-shadow-color: rgba(0, 0, 0, 0.5);
 }
+
+/* ── Light-mode background tints (chosen via the palette picker) ──
+   `data-bg` on <html> re-colors the page canvas (body + bg-slate-50
+   surfaces). Only applies in light mode; dark mode wins unconditionally. */
+
+html[data-bg="warm"]:not(.dark) body,
+html[data-bg="warm"]:not(.dark) .bg-slate-50 { background-color: #faf6ee; }
+html[data-bg="mint"]:not(.dark) body,
+html[data-bg="mint"]:not(.dark) .bg-slate-50 { background-color: #eff9f2; }
+html[data-bg="sky"]:not(.dark) body,
+html[data-bg="sky"]:not(.dark) .bg-slate-50 { background-color: #eef6fc; }
+html[data-bg="lavender"]:not(.dark) body,
+html[data-bg="lavender"]:not(.dark) .bg-slate-50 { background-color: #f5f2fc; }
+html[data-bg="rose"]:not(.dark) body,
+html[data-bg="rose"]:not(.dark) .bg-slate-50 { background-color: #fdf2f5; }
