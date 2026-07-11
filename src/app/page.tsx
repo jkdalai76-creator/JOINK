@@ -242,10 +242,11 @@ export default async function LandingPage() {
         <div className="mx-auto max-w-6xl px-4 text-center">
           <h2 className="text-3xl font-bold text-slate-900">Simple pricing</h2>
           <p className="mt-3 text-slate-600">Start free. Upgrade when your research grows.</p>
-          <div className="mx-auto mt-12 grid max-w-3xl gap-6 sm:grid-cols-2">
-            {(["free", "pro"] as const).map((code) => {
+          <div className="mx-auto mt-12 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {(["free", "pro", "team"] as const).map((code) => {
               const plan = PLAN_CATALOG[code];
               const isPro = code === "pro";
+              const isTeam = code === "team";
               return (
                 <div
                   key={code}
@@ -268,6 +269,7 @@ export default async function LandingPage() {
                     <li>✦ {plan.monthly_url_limit} URLs per month</li>
                     <li>✦ {plan.features.csv_export ? "JSON & CSV export" : "JSON export"}</li>
                     <li>✦ Grounded chat & voice questions</li>
+                    {isTeam && <li>✦ Shared projects (up to 5 members)</li>}
                   </ul>
                 </div>
               );
