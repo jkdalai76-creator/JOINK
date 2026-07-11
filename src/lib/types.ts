@@ -221,6 +221,15 @@ export interface UsageCounters {
   updated_at: string;
 }
 
+export interface Feedback {
+  id: string;
+  user_id: string | null;
+  email: string | null;
+  message: string;
+  page: string | null;
+  created_at: string;
+}
+
 /** Consistent API envelope returned by every server operation. */
 export type ApiResult<T> =
   | { success: true; data: T }

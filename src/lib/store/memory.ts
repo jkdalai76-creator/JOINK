@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type {
   Conversation,
   ExtractedLink,
+  Feedback,
   Heading,
   Message,
   Payment,
@@ -41,6 +42,8 @@ interface MemoryDb {
   webhookEvents: Map<string, WebhookEvent>;
   usage: Map<string, UsageCounters>; // key: userId:periodStart
   usageIdempotency: Set<string>;
+  visitors: Set<string>;
+  feedback: Map<string, Feedback>;
 }
 
 function newDb(): MemoryDb {
@@ -60,6 +63,8 @@ function newDb(): MemoryDb {
     webhookEvents: new Map(),
     usage: new Map(),
     usageIdempotency: new Set(),
+    visitors: new Set(),
+    feedback: new Map(),
   };
 }
 
@@ -467,6 +472,22 @@ export class MemoryStore implements DataStore {
       if (plan) return plan;
     }
     return PLAN_CATALOG.free;
+  }
+
+  // ── site stats & feedback ──
+  async recordVisitor(visitorKey: string): Promise<number> {
+    this.db.visitors.add(visitorKey);
+    return this.db.visitors.size;
+  }
+
+  async countVisitors(): Promise<number> {
+    return this.db.visitors.size;
+  }
+
+  async createFeedback(entry: Omit<Feedback, "id" | "created_at">): Promise<Feedback> {
+    const full: Feedback = { ...entry, id: randomUUID(), created_at: now() };
+    this.db.feedback.set(full.id, full);
+    return full;
   }
 
   // ── demo-mode users (auth lives here only when Supabase is absent) ──

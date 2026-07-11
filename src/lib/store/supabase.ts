@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   Conversation,
   ExtractedLink,
+  Feedback,
   Heading,
   Message,
   Payment,
@@ -469,6 +470,29 @@ export class SupabaseStore implements DataStore {
     });
     this.throwOn(error);
     return data as UsageCounters;
+  }
+
+  // ── site stats & feedback (service role only) ──
+  async recordVisitor(visitorKey: string): Promise<number> {
+    const { error } = await this.service
+      .from("site_visits")
+      .upsert({ visitor_key: visitorKey }, { onConflict: "visitor_key", ignoreDuplicates: true });
+    this.throwOn(error);
+    return this.countVisitors();
+  }
+
+  async countVisitors(): Promise<number> {
+    const { count, error } = await this.service
+      .from("site_visits")
+      .select("visitor_key", { count: "exact", head: true });
+    this.throwOn(error);
+    return count ?? 0;
+  }
+
+  async createFeedback(entry: Omit<Feedback, "id" | "created_at">): Promise<Feedback> {
+    const { data, error } = await this.service.from("feedback").insert(entry).select().single();
+    this.throwOn(error);
+    return data as Feedback;
   }
 
   // ── plan ──
