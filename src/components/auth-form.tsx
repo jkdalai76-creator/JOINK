@@ -96,7 +96,14 @@ export function AuthForm({ mode, demoAvailable }: { mode: "sign-in" | "sign-up";
             />
           </div>
           <div>
-            <Label htmlFor="password">Password</Label>
+            <div className="mb-1.5 flex items-center justify-between">
+              <Label htmlFor="password" className="mb-0">Password</Label>
+              {mode === "sign-in" && (
+                <Link href="/forgot-password" className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
+                  Forgot password?
+                </Link>
+              )}
+            </div>
             <Input
               id="password"
               type="password"
