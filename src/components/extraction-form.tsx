@@ -6,6 +6,7 @@ import { Globe, X } from "lucide-react";
 import { api } from "@/lib/client";
 import type { ExtractionOptions, Project, ScrapeRun } from "@/lib/types";
 import { Alert, Button, Card, Input, Label, Textarea } from "@/components/ui";
+import { VoiceFill } from "@/components/voice-fill";
 
 const MAX_URLS = 10;
 
@@ -90,6 +91,19 @@ export function ExtractionForm({
   return (
     <form onSubmit={submit} className="space-y-6">
       {error && <Alert tone="error">{error}</Alert>}
+
+      <VoiceFill
+        onFill={({ name: spokenName, urls: spokenUrls }) => {
+          if (!project && spokenName && !name.trim()) setName(spokenName);
+          if (spokenUrls.length) {
+            setRawUrls((prev) => {
+              const merged = [...parseUrls(prev), ...spokenUrls];
+              return [...new Set(merged)].slice(0, MAX_URLS).join("\n");
+            });
+          }
+        }}
+      />
+
 
       {!project && (
         <Card className="space-y-4 p-6">

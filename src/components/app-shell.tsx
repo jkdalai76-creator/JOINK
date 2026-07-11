@@ -13,9 +13,7 @@ import type { RuntimeMode } from "@/lib/env";
 
 const NAV = [
   { href: "/dashboard", label: "Home" },
-  { href: "/explore?feed=news", label: "News" },
-  { href: "/explore?feed=popular", label: "Popular" },
-  { href: "/explore?feed=explore", label: "Explore" },
+  { href: "/explore", label: "Explore" },
   { href: "/projects/new", label: "New project" },
   { href: "/pricing", label: "Pricing" },
   { href: "/billing", label: "Billing" },
