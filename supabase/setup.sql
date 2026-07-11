@@ -1,18 +1,16 @@
--- Joink · one-paste Supabase setup
+-- Joink · one-paste Supabase setup (SAFE TO RE-RUN)
 -- Paste this ENTIRE file into the Supabase SQL editor and click Run.
--- It is the concatenation of the migrations in supabase/migrations/,
--- and is safe to re-run (existing objects are skipped where possible).
+-- Every statement is idempotent: running it again creates only what's
+-- missing and will NOT error on objects that already exist. So if a previous
+-- run half-finished, just run this again to complete the setup.
 
--- ============================================================
--- 0001_init.sql
--- ============================================================
 -- Joink initial schema, Row Level Security and helpers.
 -- Apply with: supabase db push   (or paste into the Supabase SQL editor)
 
 -- ─────────────────────────────────────────────────────────────────────
 -- profiles (1:1 with auth.users)
 -- ─────────────────────────────────────────────────────────────────────
-create table public.profiles (
+create table if not exists public.profiles (
   id           uuid primary key references auth.users (id) on delete cascade,
   display_name text not null default '',
   created_at   timestamptz not null default now(),
@@ -30,6 +28,7 @@ begin
   return new;
 end; $$;
 
+drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
@@ -37,7 +36,7 @@ create trigger on_auth_user_created
 -- ─────────────────────────────────────────────────────────────────────
 -- projects
 -- ─────────────────────────────────────────────────────────────────────
-create table public.projects (
+create table if not exists public.projects (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references auth.users (id) on delete cascade,
   name        text not null check (char_length(name) between 1 and 120),
@@ -45,12 +44,12 @@ create table public.projects (
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
-create index projects_user_idx on public.projects (user_id, updated_at desc);
+create index if not exists projects_user_idx on public.projects (user_id, updated_at desc);
 
 -- ─────────────────────────────────────────────────────────────────────
 -- scrape_runs
 -- ─────────────────────────────────────────────────────────────────────
-create table public.scrape_runs (
+create table if not exists public.scrape_runs (
   id                  uuid primary key default gen_random_uuid(),
   project_id          uuid not null references public.projects (id) on delete cascade,
   user_id             uuid not null references auth.users (id) on delete cascade,
@@ -63,13 +62,13 @@ create table public.scrape_runs (
   created_at          timestamptz not null default now(),
   completed_at        timestamptz
 );
-create index scrape_runs_project_idx on public.scrape_runs (project_id, created_at desc);
-create index scrape_runs_user_idx on public.scrape_runs (user_id, created_at desc);
+create index if not exists scrape_runs_project_idx on public.scrape_runs (project_id, created_at desc);
+create index if not exists scrape_runs_user_idx on public.scrape_runs (user_id, created_at desc);
 
 -- ─────────────────────────────────────────────────────────────────────
 -- scraped_pages
 -- ─────────────────────────────────────────────────────────────────────
-create table public.scraped_pages (
+create table if not exists public.scraped_pages (
   id                uuid primary key default gen_random_uuid(),
   scrape_run_id     uuid not null references public.scrape_runs (id) on delete cascade,
   project_id        uuid not null references public.projects (id) on delete cascade,
@@ -89,16 +88,16 @@ create table public.scraped_pages (
   scraped_at        timestamptz,
   created_at        timestamptz not null default now()
 );
-create index scraped_pages_run_idx on public.scraped_pages (scrape_run_id);
-create index scraped_pages_user_idx on public.scraped_pages (user_id);
+create index if not exists scraped_pages_run_idx on public.scraped_pages (scrape_run_id);
+create index if not exists scraped_pages_user_idx on public.scraped_pages (user_id);
 -- Full-text search over extracted content for chat retrieval.
-create index scraped_pages_fts_idx on public.scraped_pages
+create index if not exists scraped_pages_fts_idx on public.scraped_pages
   using gin (to_tsvector('english', coalesce(page_title,'') || ' ' || coalesce(main_text,'')));
 
 -- ─────────────────────────────────────────────────────────────────────
 -- headings
 -- ─────────────────────────────────────────────────────────────────────
-create table public.headings (
+create table if not exists public.headings (
   id              uuid primary key default gen_random_uuid(),
   scraped_page_id uuid not null references public.scraped_pages (id) on delete cascade,
   level           int  not null check (level between 1 and 3),
@@ -106,12 +105,12 @@ create table public.headings (
   position_index  int  not null default 0,
   section_hint    text
 );
-create index headings_page_idx on public.headings (scraped_page_id, position_index);
+create index if not exists headings_page_idx on public.headings (scraped_page_id, position_index);
 
 -- ─────────────────────────────────────────────────────────────────────
 -- extracted_links
 -- ─────────────────────────────────────────────────────────────────────
-create table public.extracted_links (
+create table if not exists public.extracted_links (
   id              uuid primary key default gen_random_uuid(),
   scraped_page_id uuid not null references public.scraped_pages (id) on delete cascade,
   anchor_text     text not null default '',
@@ -119,12 +118,12 @@ create table public.extracted_links (
   is_internal     boolean not null default false,
   position_index  int not null default 0
 );
-create index extracted_links_page_idx on public.extracted_links (scraped_page_id, position_index);
+create index if not exists extracted_links_page_idx on public.extracted_links (scraped_page_id, position_index);
 
 -- ─────────────────────────────────────────────────────────────────────
 -- conversations + messages
 -- ─────────────────────────────────────────────────────────────────────
-create table public.conversations (
+create table if not exists public.conversations (
   id            uuid primary key default gen_random_uuid(),
   user_id       uuid not null references auth.users (id) on delete cascade,
   project_id    uuid not null references public.projects (id) on delete cascade,
@@ -133,9 +132,9 @@ create table public.conversations (
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );
-create index conversations_run_idx on public.conversations (scrape_run_id, updated_at desc);
+create index if not exists conversations_run_idx on public.conversations (scrape_run_id, updated_at desc);
 
-create table public.messages (
+create table if not exists public.messages (
   id              uuid primary key default gen_random_uuid(),
   conversation_id uuid not null references public.conversations (id) on delete cascade,
   role            text not null check (role in ('user','assistant','system')),
@@ -144,12 +143,12 @@ create table public.messages (
   input_mode      text not null default 'text' check (input_mode in ('text','voice')),
   created_at      timestamptz not null default now()
 );
-create index messages_conversation_idx on public.messages (conversation_id, created_at);
+create index if not exists messages_conversation_idx on public.messages (conversation_id, created_at);
 
 -- ─────────────────────────────────────────────────────────────────────
 -- plans (server-managed catalog; read-only to users)
 -- ─────────────────────────────────────────────────────────────────────
-create table public.plans (
+create table if not exists public.plans (
   id                  uuid primary key default gen_random_uuid(),
   code                text not null unique check (code in ('free','pro','team')),
   name                text not null,
@@ -174,12 +173,13 @@ values
   ('free', 'Free',      0, 'INR',   3,    5,   10,   5, '{"csv_export": false, "priority": false}', true),
   ('pro',  'Pro',   49900, 'INR',  50,  500,  500, 200, '{"csv_export": true,  "priority": true}',  true),
   ('team', 'Team', 149900, 'INR', 200, 2000, 2000, 1000,
-   '{"csv_export": true, "priority": true, "shared_projects": true, "members": 5}', false);
+   '{"csv_export": true, "priority": true, "shared_projects": true, "members": 5}', false)
+on conflict (code) do nothing;
 
 -- ─────────────────────────────────────────────────────────────────────
 -- subscriptions / payment_orders / payments / webhook_events
 -- ─────────────────────────────────────────────────────────────────────
-create table public.subscriptions (
+create table if not exists public.subscriptions (
   id                       uuid primary key default gen_random_uuid(),
   user_id                  uuid not null references auth.users (id) on delete cascade,
   plan_id                  uuid not null references public.plans (id),
@@ -193,9 +193,9 @@ create table public.subscriptions (
   created_at               timestamptz not null default now(),
   updated_at               timestamptz not null default now()
 );
-create index subscriptions_user_idx on public.subscriptions (user_id, updated_at desc);
+create index if not exists subscriptions_user_idx on public.subscriptions (user_id, updated_at desc);
 
-create table public.payment_orders (
+create table if not exists public.payment_orders (
   id                uuid primary key default gen_random_uuid(),
   user_id           uuid not null references auth.users (id) on delete cascade,
   plan_id           uuid not null references public.plans (id),
@@ -208,9 +208,9 @@ create table public.payment_orders (
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now()
 );
-create index payment_orders_user_idx on public.payment_orders (user_id, created_at desc);
+create index if not exists payment_orders_user_idx on public.payment_orders (user_id, created_at desc);
 
-create table public.payments (
+create table if not exists public.payments (
   id                  uuid primary key default gen_random_uuid(),
   user_id             uuid not null references auth.users (id) on delete cascade,
   subscription_id     uuid references public.subscriptions (id) on delete set null,
@@ -228,9 +228,9 @@ create table public.payments (
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now()
 );
-create index payments_user_idx on public.payments (user_id, created_at desc);
+create index if not exists payments_user_idx on public.payments (user_id, created_at desc);
 
-create table public.webhook_events (
+create table if not exists public.webhook_events (
   id                uuid primary key default gen_random_uuid(),
   provider          text not null default 'razorpay',
   provider_event_id text not null,
@@ -247,7 +247,7 @@ create table public.webhook_events (
 -- ─────────────────────────────────────────────────────────────────────
 -- usage_counters (+ idempotency keys for atomic, retry-safe increments)
 -- ─────────────────────────────────────────────────────────────────────
-create table public.usage_counters (
+create table if not exists public.usage_counters (
   id               uuid primary key default gen_random_uuid(),
   user_id          uuid not null references auth.users (id) on delete cascade,
   period_start     timestamptz not null,
@@ -260,7 +260,7 @@ create table public.usage_counters (
   unique (user_id, period_start)
 );
 
-create table public.usage_idempotency_keys (
+create table if not exists public.usage_idempotency_keys (
   user_id    uuid not null references auth.users (id) on delete cascade,
   key        text not null,
   created_at timestamptz not null default now(),
@@ -335,18 +335,23 @@ alter table public.webhook_events    enable row level security;
 alter table public.usage_counters    enable row level security;
 alter table public.usage_idempotency_keys enable row level security;
 
+drop policy if exists "own profile" on public.profiles;
 create policy "own profile" on public.profiles
   for all using (auth.uid() = id) with check (auth.uid() = id);
 
+drop policy if exists "own projects" on public.projects;
 create policy "own projects" on public.projects
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+drop policy if exists "own runs" on public.scrape_runs;
 create policy "own runs" on public.scrape_runs
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+drop policy if exists "own pages" on public.scraped_pages;
 create policy "own pages" on public.scraped_pages
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+drop policy if exists "own headings" on public.headings;
 create policy "own headings" on public.headings
   for all using (exists (
     select 1 from public.scraped_pages p
@@ -355,6 +360,7 @@ create policy "own headings" on public.headings
     select 1 from public.scraped_pages p
     where p.id = scraped_page_id and p.user_id = auth.uid()));
 
+drop policy if exists "own links" on public.extracted_links;
 create policy "own links" on public.extracted_links
   for all using (exists (
     select 1 from public.scraped_pages p
@@ -363,9 +369,11 @@ create policy "own links" on public.extracted_links
     select 1 from public.scraped_pages p
     where p.id = scraped_page_id and p.user_id = auth.uid()));
 
+drop policy if exists "own conversations" on public.conversations;
 create policy "own conversations" on public.conversations
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+drop policy if exists "own messages" on public.messages;
 create policy "own messages" on public.messages
   for all using (exists (
     select 1 from public.conversations c
@@ -375,35 +383,37 @@ create policy "own messages" on public.messages
     where c.id = conversation_id and c.user_id = auth.uid()));
 
 -- Plans: anyone signed in may read; only the service role writes.
+drop policy if exists "plans are readable" on public.plans;
 create policy "plans are readable" on public.plans
   for select using (true);
 
 -- Billing tables: users may READ their own rows; all writes come from the
 -- service role (no insert/update/delete policies for authenticated users).
+drop policy if exists "read own subscriptions" on public.subscriptions;
 create policy "read own subscriptions" on public.subscriptions
   for select using (auth.uid() = user_id);
+drop policy if exists "read own payment orders" on public.payment_orders;
 create policy "read own payment orders" on public.payment_orders
   for select using (auth.uid() = user_id);
+drop policy if exists "read own payments" on public.payments;
 create policy "read own payments" on public.payments
   for select using (auth.uid() = user_id);
+drop policy if exists "read own usage" on public.usage_counters;
 create policy "read own usage" on public.usage_counters
   for select using (auth.uid() = user_id);
 
 -- webhook_events and usage_idempotency_keys: service role only (no policies).
 
--- ============================================================
--- 0002_visits_feedback.sql
--- ============================================================
 -- Cumulative unique-visitor tracking and user feedback.
 -- Both tables are written exclusively by trusted server code (service role);
 -- no client-facing policies are defined.
 
-create table public.site_visits (
+create table if not exists public.site_visits (
   visitor_key text primary key,          -- random id from an httpOnly cookie
   first_seen  timestamptz not null default now()
 );
 
-create table public.feedback (
+create table if not exists public.feedback (
   id         uuid primary key default gen_random_uuid(),
   user_id    uuid references auth.users (id) on delete set null,
   email      text,
@@ -411,8 +421,9 @@ create table public.feedback (
   page       text,
   created_at timestamptz not null default now()
 );
-create index feedback_created_idx on public.feedback (created_at desc);
+create index if not exists feedback_created_idx on public.feedback (created_at desc);
 
 alter table public.site_visits enable row level security;
 alter table public.feedback    enable row level security;
 -- service role only: no policies.
+
