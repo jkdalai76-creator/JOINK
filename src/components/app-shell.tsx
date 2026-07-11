@@ -6,6 +6,7 @@ import * as React from "react";
 import { FlaskConical, LogOut, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/client";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { SessionUser } from "@/lib/auth";
 import type { RuntimeMode } from "@/lib/env";
 
@@ -82,6 +83,7 @@ export function AppShell({
             </nav>
           </div>
           <div className="hidden items-center gap-3 md:flex">
+            <ThemeToggle />
             <span className="text-sm text-slate-500">{user.display_name}</span>
             <button
               onClick={signOut}
@@ -92,14 +94,17 @@ export function AppShell({
               Sign out
             </button>
           </div>
+          <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
           <button
-            className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 md:hidden"
+            className="rounded-lg p-2 text-slate-600 hover:bg-slate-100"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
+          </div>
         </div>
         {menuOpen && (
           <nav className="border-t border-slate-200 bg-white px-4 py-3 md:hidden" aria-label="Mobile">

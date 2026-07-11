@@ -4,6 +4,7 @@ import { runtimeMode } from "@/lib/env";
 import { AppShell } from "@/components/app-shell";
 import { PricingClient } from "@/components/pricing-client";
 import { Logo } from "@/components/app-shell";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata = { title: "Pricing" };
 
@@ -25,7 +26,8 @@ export default async function PricingPage() {
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
           <Link href="/"><Logo /></Link>
-          <nav className="flex gap-2">
+          <nav className="flex items-center gap-2">
+            <ThemeToggle />
             <Link href="/sign-in" className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900">Sign in</Link>
             <Link href="/sign-up" className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">Sign up</Link>
           </nav>

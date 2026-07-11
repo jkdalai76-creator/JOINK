@@ -10,10 +10,16 @@ export const metadata: Metadata = {
     "Joink extracts useful public information from websites, organizes it into a structured, traceable format, and lets you explore saved results through text or voice.",
 };
 
+// Applies the saved (or OS-preferred) theme before first paint — no flash.
+const themeInitScript = `try{var t=localStorage.getItem("joink-theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen">
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {children}
+      </body>
     </html>
   );
 }
