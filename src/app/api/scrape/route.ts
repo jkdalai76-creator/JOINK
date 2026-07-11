@@ -1,6 +1,11 @@
 import { after } from "next/server";
 import { z } from "zod";
 import { errors, fail, handle, ok, parseBody } from "@/lib/api";
+
+// Extraction runs its concurrent workers in an after() callback; give the
+// function room to finish (Hobby caps at 60s, Pro allows more).
+export const maxDuration = 60;
+
 import { getCurrentUser } from "@/lib/auth";
 import { checkProcessUrls, snapshot } from "@/lib/billing/entitlements";
 import { rateLimit } from "@/lib/rate-limit";

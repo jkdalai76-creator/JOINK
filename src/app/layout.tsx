@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { SiteWidgets } from "@/components/site-widgets";
 import { SupportAgent } from "@/components/support-agent";
@@ -24,6 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <SiteWidgets />
         <SupportAgent />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
