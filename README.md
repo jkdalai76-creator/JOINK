@@ -108,6 +108,11 @@ npm run check      # typecheck + unit tests + build
 
 ## Deployment
 
+**Non-technical? Follow [DEPLOY.md](DEPLOY.md)** — a click-by-click guide to going live
+on Vercel + Supabase in ~15 minutes, no coding required.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fjkdalai76-creator%2FJOINK&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY&envDescription=Supabase%20project%20URL%20and%20keys%20from%20Project%20Settings%20%E2%86%92%20API&envLink=https%3A%2F%2Fsupabase.com%2Fdashboard)
+
 Any Node 20+ host works (Vercel, Railway, Render, Fly.io, a VM):
 
 1. Set the environment variables above (never commit secrets).
