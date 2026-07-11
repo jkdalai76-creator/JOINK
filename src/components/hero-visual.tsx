@@ -41,11 +41,15 @@ export function HeroVisual() {
       <div className="joink-glow pointer-events-none absolute -right-8 -bottom-10 h-72 w-72 rounded-full bg-fuchsia-600/20 blur-3xl [animation-delay:2s]" />
       <div className="joink-glow pointer-events-none absolute top-1/3 right-1/4 h-40 w-40 rounded-full bg-sky-500/20 blur-3xl [animation-delay:4s]" />
 
-      {/* Main workspace card */}
+      {/* Main workspace card. Stays a dark "product window" in light mode
+          (reads great on the light canvas); in dark mode it lifts onto a
+          lighter, clearly-bordered panel so it separates from the page. */}
       <div
         ref={cardRef}
-        className="joink-card-3d relative rounded-2xl border border-white/10 bg-slate-900/80 shadow-[0_40px_80px_-24px_rgba(30,27,75,0.8)] backdrop-blur-xl [transform:rotateX(-4deg)]"
+        className="joink-card-3d relative rounded-2xl border border-white/10 bg-slate-900/80 shadow-[0_40px_80px_-24px_rgba(30,27,75,0.8)] backdrop-blur-xl [transform:rotateX(-4deg)] dark:border-white/15 dark:bg-slate-900 dark:shadow-[0_40px_90px_-20px_rgba(0,0,0,0.9)] dark:ring-1 dark:ring-inset dark:ring-white/10"
       >
+        {/* Top sheen — gives the panel an elevated edge, mostly visible in dark */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-2xl bg-gradient-to-r from-transparent via-white/25 to-transparent" />
         {/* Browser chrome */}
         <div className="flex items-center gap-2 border-b border-white/10 px-4 py-3">
           <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
