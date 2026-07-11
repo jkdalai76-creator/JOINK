@@ -116,7 +116,7 @@ export async function demoUserSignIn(): Promise<SessionUser> {
   return { id: user!.id, email: user!.email, display_name: user!.display_name };
 }
 
-async function setDemoSession(userId: string): Promise<void> {
+export async function setDemoSession(userId: string): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.set(DEMO_COOKIE, sign(userId), {
     httpOnly: true,

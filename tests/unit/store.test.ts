@@ -13,6 +13,28 @@ describe("MemoryStore", () => {
     store = new MemoryStore();
   });
 
+  it("stores, looks up, counter-updates and deletes passkeys per user", async () => {
+    const c = await store.createCredential({
+      user_id: alice,
+      credential_id: "cred-abc",
+      public_key: "pk",
+      counter: 0,
+      transports: ["internal"],
+      device_label: "Laptop",
+    });
+    expect(await store.getCredentialByCredentialId("cred-abc")).toMatchObject({ user_id: alice });
+    expect(await store.listCredentialsByUser(alice)).toHaveLength(1);
+    expect(await store.listCredentialsByUser(bob)).toHaveLength(0);
+
+    await store.updateCredentialCounter(c.id, 5);
+    expect((await store.getCredentialByCredentialId("cred-abc"))?.counter).toBe(5);
+
+    await store.deleteCredential(bob, c.id); // wrong owner — no-op
+    expect(await store.listCredentialsByUser(alice)).toHaveLength(1);
+    await store.deleteCredential(alice, c.id);
+    expect(await store.listCredentialsByUser(alice)).toHaveLength(0);
+  });
+
   it("resolves stored plan ids back to their catalog plan", async () => {
     expect((await store.getPlanById("plan-pro"))?.code).toBe("pro");
     expect((await store.getPlanById("plan-team"))?.code).toBe("team");

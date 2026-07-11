@@ -13,6 +13,7 @@ import type {
   ScrapedPage,
   Subscription,
   UsageCounters,
+  WebAuthnCredential,
   WebhookEvent,
 } from "@/lib/types";
 import { PLAN_CATALOG, getPlanById as catalogPlanById } from "@/lib/plans";
@@ -527,6 +528,56 @@ export class SupabaseStore implements DataStore {
     const { data, error } = await this.service.from("feedback").insert(entry).select().single();
     this.throwOn(error);
     return data as Feedback;
+  }
+
+  // ── passkeys (WebAuthn) ── service-role: login lookups run before a session
+  // exists, and every query is scoped by user_id / credential_id explicitly.
+  async listCredentialsByUser(userId: string): Promise<WebAuthnCredential[]> {
+    const { data, error } = await this.service
+      .from("webauthn_credentials")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: true });
+    this.throwOn(error);
+    return (data ?? []) as WebAuthnCredential[];
+  }
+
+  async getCredentialByCredentialId(credentialId: string): Promise<WebAuthnCredential | null> {
+    const { data } = await this.service
+      .from("webauthn_credentials")
+      .select("*")
+      .eq("credential_id", credentialId)
+      .maybeSingle();
+    return (data as WebAuthnCredential | null) ?? null;
+  }
+
+  async createCredential(
+    cred: Omit<WebAuthnCredential, "id" | "created_at" | "last_used_at">,
+  ): Promise<WebAuthnCredential> {
+    const { data, error } = await this.service
+      .from("webauthn_credentials")
+      .insert(cred)
+      .select()
+      .single();
+    this.throwOn(error);
+    return data as WebAuthnCredential;
+  }
+
+  async updateCredentialCounter(id: string, counter: number): Promise<void> {
+    const { error } = await this.service
+      .from("webauthn_credentials")
+      .update({ counter, last_used_at: new Date().toISOString() })
+      .eq("id", id);
+    this.throwOn(error);
+  }
+
+  async deleteCredential(userId: string, id: string): Promise<void> {
+    const { error } = await this.service
+      .from("webauthn_credentials")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", userId);
+    this.throwOn(error);
   }
 
   // ── plan ──

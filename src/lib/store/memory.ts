@@ -13,6 +13,7 @@ import type {
   ScrapedPage,
   Subscription,
   UsageCounters,
+  WebAuthnCredential,
   WebhookEvent,
 } from "@/lib/types";
 import { PLAN_CATALOG, getPlanById as catalogPlanById } from "@/lib/plans";
@@ -44,6 +45,7 @@ interface MemoryDb {
   usageIdempotency: Set<string>;
   visitors: Set<string>;
   feedback: Map<string, Feedback>;
+  credentials: Map<string, WebAuthnCredential>;
 }
 
 function newDb(): MemoryDb {
@@ -65,6 +67,7 @@ function newDb(): MemoryDb {
     usageIdempotency: new Set(),
     visitors: new Set(),
     feedback: new Map(),
+    credentials: new Map(),
   };
 }
 
@@ -476,6 +479,40 @@ export class MemoryStore implements DataStore {
 
   async getPlanById(planId: string): Promise<Plan | null> {
     return catalogPlanById(planId);
+  }
+
+  // ── passkeys (WebAuthn) ──
+  async listCredentialsByUser(userId: string): Promise<WebAuthnCredential[]> {
+    return [...memoryDb().credentials.values()].filter((c) => c.user_id === userId);
+  }
+
+  async getCredentialByCredentialId(credentialId: string): Promise<WebAuthnCredential | null> {
+    return (
+      [...memoryDb().credentials.values()].find((c) => c.credential_id === credentialId) ?? null
+    );
+  }
+
+  async createCredential(
+    cred: Omit<WebAuthnCredential, "id" | "created_at" | "last_used_at">,
+  ): Promise<WebAuthnCredential> {
+    const full: WebAuthnCredential = {
+      ...cred,
+      id: randomUUID(),
+      created_at: now(),
+      last_used_at: null,
+    };
+    memoryDb().credentials.set(full.id, full);
+    return full;
+  }
+
+  async updateCredentialCounter(id: string, counter: number): Promise<void> {
+    const c = memoryDb().credentials.get(id);
+    if (c) memoryDb().credentials.set(id, { ...c, counter, last_used_at: now() });
+  }
+
+  async deleteCredential(userId: string, id: string): Promise<void> {
+    const c = memoryDb().credentials.get(id);
+    if (c && c.user_id === userId) memoryDb().credentials.delete(id);
   }
 
   // ── site stats & feedback ──

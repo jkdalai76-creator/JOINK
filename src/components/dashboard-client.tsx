@@ -8,6 +8,7 @@ import { api } from "@/lib/client";
 import type { Project, ScrapeRun, UsageCounters } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { Alert, Badge, Button, Card, EmptyState, Input, Skeleton, statusTone } from "@/components/ui";
+import { PasskeySetup } from "@/components/passkey-setup";
 
 interface UsagePayload {
   plan: {
@@ -240,6 +241,12 @@ export function DashboardClient() {
             </table>
           </Card>
         )}
+      </section>
+
+      {/* Account security */}
+      <section>
+        <h2 className="mb-3 text-lg font-semibold text-slate-900">Account security</h2>
+        <PasskeySetup />
       </section>
     </div>
   );

@@ -12,6 +12,7 @@ import type {
   ScrapedPage,
   Subscription,
   UsageCounters,
+  WebAuthnCredential,
   WebhookEvent,
 } from "@/lib/types";
 
@@ -127,4 +128,13 @@ export interface DataStore {
   recordVisitor(visitorKey: string): Promise<number>;
   countVisitors(): Promise<number>;
   createFeedback(entry: Omit<Feedback, "id" | "created_at">): Promise<Feedback>;
+
+  // ── passkeys (WebAuthn) ──
+  listCredentialsByUser(userId: string): Promise<WebAuthnCredential[]>;
+  getCredentialByCredentialId(credentialId: string): Promise<WebAuthnCredential | null>;
+  createCredential(
+    cred: Omit<WebAuthnCredential, "id" | "created_at" | "last_used_at">,
+  ): Promise<WebAuthnCredential>;
+  updateCredentialCounter(id: string, counter: number): Promise<void>;
+  deleteCredential(userId: string, id: string): Promise<void>;
 }

@@ -427,3 +427,22 @@ alter table public.site_visits enable row level security;
 alter table public.feedback    enable row level security;
 -- service role only: no policies.
 
+
+-- ── Passkeys (WebAuthn credentials) ─────────────────────────────────
+-- One row per registered passkey. Written and read exclusively by trusted
+-- server code (service role) — login lookups happen before a session exists.
+create table if not exists public.webauthn_credentials (
+  id            uuid primary key default gen_random_uuid(),
+  user_id       uuid not null references auth.users (id) on delete cascade,
+  credential_id text not null unique,      -- base64url credential id
+  public_key    text not null,             -- base64url COSE public key
+  counter       bigint not null default 0,
+  transports    text[],
+  device_label  text,
+  created_at    timestamptz not null default now(),
+  last_used_at  timestamptz
+);
+create index if not exists webauthn_user_idx on public.webauthn_credentials (user_id);
+
+alter table public.webauthn_credentials enable row level security;
+-- service role only: no client-facing policies.

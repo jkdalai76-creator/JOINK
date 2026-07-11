@@ -6,6 +6,7 @@ import * as React from "react";
 import { api } from "@/lib/client";
 import { Alert, Button, Input, Label } from "@/components/ui";
 import { Logo } from "@/components/app-shell";
+import { PasskeySignInButton } from "@/components/passkey-signin-button";
 
 export function AuthForm({ mode, demoAvailable }: { mode: "sign-in" | "sign-up"; demoAvailable: boolean }) {
   const router = useRouter();
@@ -122,6 +123,16 @@ export function AuthForm({ mode, demoAvailable }: { mode: "sign-in" | "sign-up";
             <Button type="button" variant="outline" className="w-full" loading={demoLoading} onClick={tryDemo}>
               Try the demo account
             </Button>
+          )}
+          {mode === "sign-in" && (
+            <>
+              <div className="flex items-center gap-3 py-1 text-xs text-slate-400">
+                <span className="h-px flex-1 bg-slate-200" />
+                or
+                <span className="h-px flex-1 bg-slate-200" />
+              </div>
+              <PasskeySignInButton onError={(m) => setError(m || null)} />
+            </>
           )}
         </form>
 

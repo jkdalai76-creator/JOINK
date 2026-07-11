@@ -230,6 +230,19 @@ export interface Feedback {
   created_at: string;
 }
 
+/** A registered passkey (WebAuthn credential) for biometric / device sign-in. */
+export interface WebAuthnCredential {
+  id: string;
+  user_id: string;
+  credential_id: string; // base64url
+  public_key: string; // base64url of the COSE public key bytes
+  counter: number;
+  transports: string[] | null;
+  device_label: string | null;
+  created_at: string;
+  last_used_at: string | null;
+}
+
 /** Consistent API envelope returned by every server operation. */
 export type ApiResult<T> =
   | { success: true; data: T }
