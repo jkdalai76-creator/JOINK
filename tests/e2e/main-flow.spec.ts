@@ -18,7 +18,7 @@ async function signUp(page: Page, email: string) {
 
 test("landing page renders with CTA and responsible-scraping statement", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("structured");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("source-linked");
   await expect(page.getByRole("link", { name: "Start scraping" })).toBeVisible();
   await expect(page.getByText("responsible-scraping commitment")).toBeVisible();
 });
