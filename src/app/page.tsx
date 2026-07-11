@@ -43,7 +43,7 @@ export default async function LandingPage() {
             {user ? (
               <Link
                 href="/dashboard"
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-500"
+                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-500"
               >
                 Open dashboard
               </Link>
@@ -57,7 +57,7 @@ export default async function LandingPage() {
                 </Link>
                 <Link
                   href="/sign-up"
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-500"
+                  className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition hover:bg-emerald-500"
                 >
                   Sign up
                 </Link>
@@ -72,7 +72,7 @@ export default async function LandingPage() {
         <div className="pointer-events-none absolute -top-40 left-1/2 h-[34rem] w-[60rem] -translate-x-1/2 rounded-full bg-emerald-500/15 blur-[120px] dark:bg-indigo-600/20" />
         <div className="pointer-events-none absolute top-20 right-0 h-72 w-72 rounded-full bg-teal-400/10 blur-[100px] dark:bg-fuchsia-600/10" />
         <div className="relative mx-auto max-w-6xl px-4 pt-20 pb-24 text-center sm:pt-28">
-          <p className="mx-auto mb-6 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-1.5 text-xs font-medium text-indigo-700">
+          <p className="mx-auto mb-6 inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-100 px-4 py-1.5 text-xs font-medium text-emerald-800">
             <Sparkles className="h-3.5 w-3.5" aria-hidden />
             Structured, traceable web research — with cited AI answers
           </p>
@@ -88,7 +88,7 @@ export default async function LandingPage() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
               href={cta}
-              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-7 py-3.5 text-base font-semibold text-white shadow-xl shadow-indigo-500/30 transition hover:shadow-2xl hover:shadow-fuchsia-500/30"
+              className="group inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-7 py-3.5 text-base font-semibold text-white shadow-xl shadow-emerald-500/30 transition hover:bg-emerald-500 hover:shadow-2xl hover:shadow-emerald-500/40"
             >
               Start scraping
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
@@ -97,7 +97,7 @@ export default async function LandingPage() {
               href="/guide"
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-7 py-3.5 text-base font-medium text-slate-700 transition hover:bg-slate-100"
             >
-              <BookOpen className="h-4 w-4 text-indigo-600" aria-hidden />
+              <BookOpen className="h-4 w-4 text-emerald-600" aria-hidden />
               New to this? Read the guide
             </Link>
           </div>
@@ -126,31 +126,31 @@ export default async function LandingPage() {
 
       {/* ── Three steps ── */}
       <section className="relative border-t border-slate-200 py-24">
-        <div className="pointer-events-none absolute top-0 right-0 h-72 w-72 rounded-full bg-fuchsia-600/10 blur-[100px]" />
+        <div className="pointer-events-none absolute top-0 right-0 h-72 w-72 rounded-full bg-teal-500/10 blur-[100px]" />
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="text-center text-3xl font-bold text-slate-900">
             Three steps to <span className="joink-gradient-text">trustworthy research</span>
           </h2>
           <div className="relative mt-14 grid gap-6 md:grid-cols-3">
-            <div className="pointer-events-none absolute top-10 right-[16%] left-[16%] hidden h-px bg-gradient-to-r from-indigo-500/60 via-fuchsia-500/60 to-sky-500/60 md:block" />
+            <div className="pointer-events-none absolute top-10 right-[16%] left-[16%] hidden h-px bg-gradient-to-r from-emerald-500/50 via-teal-500/50 to-emerald-500/50 md:block" />
             {[
               {
                 step: "01",
                 title: "Paste your URLs",
                 body: "Create a project and drop in up to 10 public webpage links — one per line. Choose what to capture.",
-                tone: "from-indigo-500 to-indigo-400",
+                tone: "from-emerald-600 to-emerald-500",
               },
               {
                 step: "02",
                 title: "Joink extracts & structures",
                 body: "Each page is fetched safely and organized into metadata, headings, readable text and links — with live per-URL status.",
-                tone: "from-fuchsia-500 to-pink-400",
+                tone: "from-emerald-500 to-teal-500",
               },
               {
                 step: "03",
                 title: "Explore, ask, export",
                 body: "Search and filter results, question them by text or voice with citations, and export JSON or CSV.",
-                tone: "from-sky-500 to-cyan-400",
+                tone: "from-teal-600 to-emerald-500",
               },
             ].map((s) => (
               <div
@@ -172,7 +172,7 @@ export default async function LandingPage() {
 
       {/* ── Features ── */}
       <section className="relative border-t border-slate-200 py-24">
-        <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-indigo-600/10 blur-[100px]" />
+        <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-emerald-500/10 blur-[100px]" />
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="text-center text-3xl font-bold text-slate-900">
             Built for people who cite their sources
@@ -218,7 +218,7 @@ export default async function LandingPage() {
                 key={f.title}
                 className="joink-lift group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
               >
-                <div className="mb-4 inline-flex rounded-xl bg-indigo-50 p-2.5 text-indigo-600">{f.icon}</div>
+                <div className="mb-4 inline-flex rounded-xl bg-emerald-100 p-2.5 text-emerald-700">{f.icon}</div>
                 <h3 className="font-semibold text-slate-900">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{f.body}</p>
               </div>
@@ -240,11 +240,11 @@ export default async function LandingPage() {
                 <div
                   key={code}
                   className={`joink-lift relative rounded-2xl border bg-white p-8 text-left shadow-sm ${
-                    isPro ? "border-indigo-300 ring-2 ring-indigo-100" : "border-slate-200"
+                    isPro ? "border-emerald-300 ring-2 ring-emerald-100" : "border-slate-200"
                   }`}
                 >
                   {isPro && (
-                    <span className="absolute -top-3 left-8 rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-3 py-1 text-[11px] font-bold text-white shadow-lg">
+                    <span className="absolute -top-3 left-8 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white shadow-lg">
                       MOST POPULAR
                     </span>
                   )}
@@ -265,7 +265,7 @@ export default async function LandingPage() {
           </div>
           <Link
             href="/pricing"
-            className="mt-10 inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 transition hover:text-indigo-700"
+            className="mt-10 inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700 transition hover:text-emerald-800"
           >
             See the full comparison <ArrowRight className="h-4 w-4" aria-hidden />
           </Link>
@@ -301,7 +301,7 @@ export default async function LandingPage() {
           </h2>
           <Link
             href={cta}
-            className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-8 py-4 text-lg font-semibold text-white shadow-xl shadow-indigo-500/30 transition hover:shadow-2xl hover:shadow-fuchsia-500/40"
+            className="group mt-8 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-8 py-4 text-lg font-semibold text-white shadow-xl shadow-emerald-500/30 transition hover:bg-emerald-500 hover:shadow-2xl hover:shadow-emerald-500/40"
           >
             {user ? "Open your dashboard" : "Create your free account"}
             <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden />

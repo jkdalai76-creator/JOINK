@@ -23,6 +23,7 @@ method, status and confidence indicator**.
 - 🧪 64 unit tests + Playwright end-to-end tests
 - 🪫 Graceful degradation: the core scraping flow works **without** Supabase, AI, or Razorpay configured
 - 📖 Built-in beginner Guide & FAQ at `/guide` — explains web scraping from zero, with a visual step-by-step walkthrough
+- 🤖 In-app **AI voice-agent support assistant** ("Ask Joink") on every page — answers product/how-to questions from a fixed knowledge base (never from scraped content), by text or voice, with a keyword fallback when no AI key is set
 
 ## Quick start (zero configuration — demo mode)
 
