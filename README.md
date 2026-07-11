@@ -47,12 +47,19 @@ Open http://localhost:3000. With no environment variables at all, Joink runs in 
 ## Full setup (Supabase + AI + Razorpay Test Mode)
 
 1. **Copy env template:** `cp .env.example .env.local` and fill values as below.
-2. **Supabase:** create a project at supabase.com, then run the migration:
-   - Paste `supabase/migrations/0001_init.sql` into the SQL editor (or `supabase db push`).
+2. **Supabase:** create a project at supabase.com, then run the schema:
+   - **One-paste option:** open `supabase/setup.sql`, copy all of it into the Supabase **SQL
+     editor**, and click **Run**. (It's the two migrations combined.)
+   - Or run `supabase/migrations/0001_init.sql` then `0002_visits_feedback.sql` individually
+     (or `supabase db push`).
    - Copy the project URL, anon key, and service-role key into `.env.local`.
-   - The migration creates all tables, indexes, Row Level Security policies and the atomic
-     `increment_usage` function. Users can only read their own data; billing tables are
-     writable only by the service role.
+   - This creates all tables, indexes, Row Level Security policies, the atomic
+     `increment_usage` function, and the visitor/feedback tables. Users can only read their own
+     data; billing tables are writable only by the service role.
+   - For hackathon demos, disable **Authentication → Providers → Email → "Confirm email"** so
+     sign-ups can log in immediately.
+   - **Verify the wiring:** after setting env vars and restarting, open `/api/health` — it
+     reports whether Supabase is connected and the migrations are applied (no secrets exposed).
 3. **AI (optional):** set `AI_API_KEY` (+ `AI_BASE_URL`, `AI_MODEL`) for any OpenAI-compatible
    chat-completions endpoint.
 4. **Razorpay Test Mode (optional):**
