@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { env, mockBillingEnabled, razorpayConfigured } from "@/lib/env";
-import { getPlanById, getPurchasablePlan } from "@/lib/plans";
+import { getPurchasablePlan } from "@/lib/plans";
 import type { DataStore } from "@/lib/store/types";
 import type { Plan, Subscription } from "@/lib/types";
 import {
@@ -160,7 +160,7 @@ export async function verifyCheckout(
       ? await store.getPaymentOrderById(userId, input.mockToken)
       : null;
     if (!order) throw new BillingError("invalid_order", "Unknown mock order.");
-    const plan = getPlanById(order.plan_id);
+    const plan = await store.getPlanById(order.plan_id);
     if (!plan) throw new BillingError("unknown_plan", "Plan unavailable.");
     await store.updatePaymentOrder(order.id, { status: "paid" });
     await store.upsertPaymentByRazorpayId({
@@ -194,7 +194,7 @@ export async function verifyCheckout(
     if (!sub || sub.user_id !== userId) {
       throw new BillingError("invalid_subscription", "Subscription not found.", 404);
     }
-    const plan = getPlanById(sub.plan_id);
+    const plan = await store.getPlanById(sub.plan_id);
     if (!plan) throw new BillingError("unknown_plan", "Plan unavailable.");
     // Confirm real state with Razorpay before granting anything.
     const remote = await fetchRazorpaySubscription(input.razorpaySubscriptionId!);
@@ -244,7 +244,7 @@ export async function verifyCheckout(
   if (!order || order.user_id !== userId) {
     throw new BillingError("invalid_order", "Order not found.", 404);
   }
-  const plan = getPlanById(order.plan_id);
+  const plan = await store.getPlanById(order.plan_id);
   if (!plan) throw new BillingError("unknown_plan", "Plan unavailable.");
   // Confirm capture with the Razorpay API — the client callback alone is
   // never trusted to grant access.

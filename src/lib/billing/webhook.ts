@@ -1,4 +1,3 @@
-import { getPlanById } from "@/lib/plans";
 import type { DataStore } from "@/lib/store/types";
 import { activatePro } from "./service";
 
@@ -64,7 +63,7 @@ export async function processRazorpayEvent(
       if (!localOrder) return "skipped";
       if (localOrder.status !== "paid") {
         await store.updatePaymentOrder(localOrder.id, { status: "paid" });
-        const plan = getPlanById(localOrder.plan_id);
+        const plan = await store.getPlanById(localOrder.plan_id);
         if (plan) {
           await activatePro(store, localOrder.user_id, plan, { provider: "razorpay" });
         }
@@ -77,7 +76,7 @@ export async function processRazorpayEvent(
       if (!subscription) return "skipped";
       const localSub = await store.getSubscriptionByRazorpayId(subscription.id);
       if (!localSub) return "skipped";
-      const plan = getPlanById(localSub.plan_id);
+      const plan = await store.getPlanById(localSub.plan_id);
       if (plan) {
         await activatePro(store, localSub.user_id, plan, {
           provider: "razorpay",

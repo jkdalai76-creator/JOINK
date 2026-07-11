@@ -15,7 +15,8 @@ import type {
   UsageCounters,
   WebhookEvent,
 } from "@/lib/types";
-import { PLAN_CATALOG } from "@/lib/plans";
+import { PLAN_CATALOG, getPlanById as catalogPlanById } from "@/lib/plans";
+import type { PlanCode } from "@/lib/types";
 import type { DataStore, NewHeading, NewLink, NewScrapedPage, UsageDeltas } from "./types";
 
 /**
@@ -295,9 +296,41 @@ export class SupabaseStore implements DataStore {
     return (data as Subscription) ?? null;
   }
 
+  /**
+   * The catalog uses string ids ("plan-pro"); the DB uses uuid primary keys.
+   * Billing passes catalog ids, so translate to the real plans.id uuid before
+   * writing FK columns. Values that are already uuids (e.g. re-saving a row
+   * read from the DB) pass through unchanged.
+   */
+  private async resolvePlanUuid(planId: string): Promise<string> {
+    const catalog = catalogPlanById(planId);
+    if (!catalog) return planId; // already a DB uuid
+    const { data, error } = await this.service
+      .from("plans")
+      .select("id")
+      .eq("code", catalog.code)
+      .maybeSingle();
+    this.throwOn(error);
+    if (!data) throw new Error(`No plans row for code "${catalog.code}"`);
+    return (data as { id: string }).id;
+  }
+
+  async getPlanById(planId: string): Promise<Plan | null> {
+    const catalog = catalogPlanById(planId);
+    if (catalog) return catalog; // defensive: a catalog id was passed
+    const { data } = await this.service
+      .from("plans")
+      .select("code")
+      .eq("id", planId)
+      .maybeSingle();
+    const code = (data as { code?: string } | null)?.code;
+    return code ? (PLAN_CATALOG[code as PlanCode] ?? null) : null;
+  }
+
   async upsertSubscription(
     sub: Omit<Subscription, "id" | "created_at" | "updated_at"> & { id?: string },
   ): Promise<Subscription> {
+    sub = { ...sub, plan_id: await this.resolvePlanUuid(sub.plan_id) };
     if (sub.razorpay_subscription_id) {
       const existing = await this.getSubscriptionByRazorpayId(sub.razorpay_subscription_id);
       if (existing) {
@@ -328,6 +361,7 @@ export class SupabaseStore implements DataStore {
   async createPaymentOrder(
     order: Omit<PaymentOrder, "id" | "created_at" | "updated_at">,
   ): Promise<PaymentOrder> {
+    order = { ...order, plan_id: await this.resolvePlanUuid(order.plan_id) };
     const { data, error } = await this.service
       .from("payment_orders")
       .insert(order)

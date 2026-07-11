@@ -116,6 +116,11 @@ export interface DataStore {
 
   // ── plan resolution ──
   getUserPlan(userId: string): Promise<Plan>;
+  /**
+   * Maps a stored plan_id (a DB uuid in Supabase, a catalog id in memory) back
+   * to its catalog Plan. Returns null if it can't be resolved.
+   */
+  getPlanById(planId: string): Promise<Plan | null>;
 
   // ── site stats & feedback ──
   /** Records a unique visitor key; returns the cumulative visitor count. */

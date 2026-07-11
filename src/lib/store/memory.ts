@@ -15,7 +15,7 @@ import type {
   UsageCounters,
   WebhookEvent,
 } from "@/lib/types";
-import { PLAN_CATALOG } from "@/lib/plans";
+import { PLAN_CATALOG, getPlanById as catalogPlanById } from "@/lib/plans";
 import type { DataStore, NewHeading, NewLink, NewScrapedPage, UsageDeltas } from "./types";
 
 export interface DemoUser {
@@ -472,6 +472,10 @@ export class MemoryStore implements DataStore {
       if (plan) return plan;
     }
     return PLAN_CATALOG.free;
+  }
+
+  async getPlanById(planId: string): Promise<Plan | null> {
+    return catalogPlanById(planId);
   }
 
   // ── site stats & feedback ──

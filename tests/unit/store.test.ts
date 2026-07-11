@@ -13,6 +13,12 @@ describe("MemoryStore", () => {
     store = new MemoryStore();
   });
 
+  it("resolves stored plan ids back to their catalog plan", async () => {
+    expect((await store.getPlanById("plan-pro"))?.code).toBe("pro");
+    expect((await store.getPlanById("plan-team"))?.code).toBe("team");
+    expect(await store.getPlanById("plan-missing")).toBeNull();
+  });
+
   it("prevents cross-user access to projects, runs, pages and conversations", async () => {
     const project = await store.createProject(alice, "Alice's research", null);
     const run = await store.createRun({
