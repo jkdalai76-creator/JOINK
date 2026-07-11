@@ -27,11 +27,17 @@ function looksLikeUrl(value: string): boolean {
  * Create-project + extraction form. When `project` is given, the project step
  * is skipped and the run starts inside it.
  */
-export function ExtractionForm({ project }: { project?: Project }) {
+export function ExtractionForm({
+  project,
+  initialUrls,
+}: {
+  project?: Project;
+  initialUrls?: string;
+}) {
   const router = useRouter();
   const [name, setName] = React.useState(project?.name ?? "");
   const [description, setDescription] = React.useState(project?.description ?? "");
-  const [rawUrls, setRawUrls] = React.useState("");
+  const [rawUrls, setRawUrls] = React.useState(initialUrls ?? "");
   const [options, setOptions] = React.useState<ExtractionOptions>({
     metadata: true,
     headings: true,

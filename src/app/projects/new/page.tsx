@@ -3,7 +3,12 @@ import { ExtractionForm } from "@/components/extraction-form";
 
 export const metadata = { title: "New project" };
 
-export default function NewProjectPage() {
+export default async function NewProjectPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ url?: string }>;
+}) {
+  const { url } = await searchParams;
   return (
     <RequireAuth>
       <div className="mx-auto max-w-2xl">
@@ -11,7 +16,7 @@ export default function NewProjectPage() {
         <p className="mt-1 mb-6 text-sm text-slate-500">
           Name your project, paste the URLs you want to extract, and choose what to capture.
         </p>
-        <ExtractionForm />
+        <ExtractionForm initialUrls={typeof url === "string" ? url : undefined} />
       </div>
     </RequireAuth>
   );

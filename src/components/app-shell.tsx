@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
 import { FlaskConical, LogOut, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,10 @@ import type { SessionUser } from "@/lib/auth";
 import type { RuntimeMode } from "@/lib/env";
 
 const NAV = [
-  { href: "/dashboard", label: "Dashboard" },
+  { href: "/dashboard", label: "Home" },
+  { href: "/explore?feed=news", label: "News" },
+  { href: "/explore?feed=popular", label: "Popular" },
+  { href: "/explore?feed=explore", label: "Explore" },
   { href: "/projects/new", label: "New project" },
   { href: "/pricing", label: "Pricing" },
   { href: "/billing", label: "Billing" },
@@ -40,9 +43,18 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [signingOut, setSigningOut] = React.useState(false);
+
+  function isActive(href: string): boolean {
+    const [path, query] = href.split("?");
+    if (pathname !== path) return false;
+    if (!query) return true;
+    const wantFeed = new URLSearchParams(query).get("feed");
+    return (searchParams.get("feed") ?? "news") === wantFeed;
+  }
 
   async function signOut() {
     setSigningOut(true);
@@ -73,7 +85,7 @@ export function AppShell({
                   href={item.href}
                   className={cn(
                     "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
-                    pathname === item.href
+                    isActive(item.href)
                       ? "bg-indigo-50 text-indigo-700"
                       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
                   )}
@@ -118,7 +130,7 @@ export function AppShell({
                 onClick={() => setMenuOpen(false)}
                 className={cn(
                   "block rounded-lg px-3 py-2 text-sm font-medium",
-                  pathname === item.href ? "bg-indigo-50 text-indigo-700" : "text-slate-600",
+                  isActive(item.href) ? "bg-indigo-50 text-indigo-700" : "text-slate-600",
                 )}
               >
                 {item.label}
