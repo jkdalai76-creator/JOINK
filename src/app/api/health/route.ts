@@ -46,9 +46,9 @@ export async function GET() {
         }
       } catch (err) {
         supabase.detail =
-          err instanceof Error && /SERVICE_ROLE/.test(err.message)
-            ? "SUPABASE_SERVICE_ROLE_KEY is not set (server-side)."
-            : "Could not reach Supabase — check NEXT_PUBLIC_SUPABASE_URL and keys.";
+          err instanceof Error && /SERVICE_ROLE|not configured/i.test(err.message)
+            ? "The Supabase service key is not set (SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SECRET_KEY)."
+            : "Could not reach Supabase — check the Supabase URL and keys.";
       }
     } else {
       supabase.detail =
