@@ -80,8 +80,8 @@ body {
 .joink-eq-bar { animation: joink-eq 1s ease-in-out infinite; transform-origin: bottom; }
 
 .joink-gradient-text {
-  /* deeper hues so the gradient stays readable on light backgrounds */
-  background: linear-gradient(100deg, #4f46e5, #c026d3, #0284c7, #4f46e5);
+  /* Single locked accent (emerald→teal), no AI indigo/fuchsia gradient. */
+  background: linear-gradient(100deg, #059669, #0d9488, #10b981, #059669);
   background-size: 250% 250%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -90,7 +90,7 @@ body {
 }
 
 .dark .joink-gradient-text {
-  background-image: linear-gradient(100deg, #818cf8, #e879f9, #38bdf8, #818cf8);
+  background-image: linear-gradient(100deg, #34d399, #2dd4bf, #6ee7b7, #34d399);
 }
 
 /* Subtle blueprint grid (light + dark variants) */
